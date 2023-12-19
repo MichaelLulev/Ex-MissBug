@@ -49,15 +49,17 @@ export function BugIndex() {
     }
 
     function onEditBug(bug) {
-        const severity = +prompt('New severity?')
-        const bugToSave = { ...bug, severity }
+        var severity = prompt('New severity?')
+        severity = ! severity ? bug.severity : +severity
+        const description = prompt('New descripiton', bug.description)
+        const bugToSave = { ...bug, severity, description }
         bugService
             .save(bugToSave)
             .then((savedBug) => {
                 console.log('Updated Bug:', savedBug)
-                const bugsToUpdate = bugs.map((currBug) =>
-                    currBug._id === savedBug._id ? savedBug : currBug
-                )
+                const bugsToUpdate = bugs.map(bug => {
+                    return bug._id === savedBug._id ? savedBug : bug
+                })
                 setBugs(bugsToUpdate)
                 showSuccessMsg('Bug updated')
             })
