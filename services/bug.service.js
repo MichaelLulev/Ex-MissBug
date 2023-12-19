@@ -4,104 +4,75 @@ import { utilService } from './util.service.js'
 const BUGS_DIR = './data'
 const BUGS_PATH = `${BUGS_DIR}/bugs.json`
 
-_createBugs()
-
 export const bugService = {
     query,
     get,
     save,
     remove,
-    create,
 }
 
-function _getBugs() {
-    const prmBugs = fs.readFile(BUGS_PATH, 'utf-8')
+function _loadBugs() {
+    return fs.readFile(BUGS_PATH, 'utf-8')
         .then(res => JSON.parse(res))
-    return prmBugs
 }
 
 function _saveBugs(bugs=[]) {
     const strBugs = JSON.stringify(bugs, null, '\t')
-    const prm = fs.stat(BUGS_DIR)
+    return fs.stat(BUGS_DIR)
         .catch(() => fs.mkdir(BUGS_DIR))
         .then(() => fs.writeFile(BUGS_PATH, strBugs, 'utf-8'))
-    return prm
 }
 
 function query() {
-    const prmBugs = _getBugs()
+    return _loadBugs()
         .then(bugs => {
-            if (! bugs || ! bugs.length) {
+            if (! bugs || bugs.length === 0) {
                 console.log('There are no bugs!, creating bugs :)')
-                bugs = _createBugs()
-                var prmBugs = _saveBugs(bugs)
-                    .then(() => bugs)
+                bugs = _createNewBugs()
+                return _saveBugs(bugs).then(() => bugs)
             } else {
                 console.log('There are bugs! everything is OK!')
-                var prmBugs = Promise.resolve(bugs)
+                return bugs
             }
-            return prmBugs
         })
-    return prmBugs
 }
+
 function get(bugId) {
-    const prmBug = query()
+    return query()
         .then(bugs => {
             const bug = bugs.find(bug => bug._id === bugId)
             if (! bug) return Promise.reject('No such bug')
             return bug
         })
-    return prmBug
 }
 
 function save(bug) {
-    const prm = query()
+    return query()
         .then(bugs => {
             if (bug._id) {
-                const bugIdx = bugs.findIndex(_bug => {
-                    return _bug._id === bug._id
-                })
+                const bugIdx = bugs.findIndex(_bug => _bug._id === bug._id)
                 if (bugIdx < 0) return Promise.reject('No such bug')
                 bugs[bugIdx] = bug
-        } else {
-                bug = create(bug.title, bug.severity, bug.description)
+            } else {
                 bug._id = utilService.makeId()
-                bugs.push(bug)
+                bugs.unshift(bug)
             }
-            const prmBug = _saveBugs(bugs)
-                .then(() => bug)
-            return prmBug
+            return _saveBugs(bugs).then(() => bug)
         })
-    return prm
 }
 
 function remove(bugId) {
-    const prmBug =
-    query()
+    return query()
         .then(bugs => {
             const bugIdx = bugs.findIndex(bug => bug._id === bugId)
             if (bugIdx < 0) return Promise.reject('No such bug')
             const bug = bugs[bugIdx]
             bugs.splice(bugIdx, 1)
-            const prmBug = _saveBugs(bugs)
-                .then(() => bug)
-            return prmBug
+            return _saveBugs(bugs).then(() => bug)
         })
-    return prmBug
 }
 
-function create(title='', severity, description='', _id) {
-    if (isNaN(severity)) severity = 0
-    const newBug = {
-        title,
-        severity,
-        description,
-        _id,
-    }
-    return newBug
-}
-
-function _createBugs() {
+function _createNewBugs() {
     const newBugs = [
         {
             title: "Infinite Loop Detected",

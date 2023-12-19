@@ -50,12 +50,3 @@ function remove(bugId) {
         .then(res => res.data)
     return prmBug
 }
-
-function create(title='', sevirity=0, description='') {
-    const newBug = {
-        title,
-        sevirity,
-        description,
-    }
-    return newBug
-}
