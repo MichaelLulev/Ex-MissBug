@@ -1,4 +1,5 @@
 import fs from 'fs/promises'
+import { utilService } from './util.service.js'
 
 const BUGS_DIR = './data'
 const BUGS_PATH = `${BUGS_DIR}/bugs.json`
@@ -7,9 +8,10 @@ _createBugs()
 
 export const bugService = {
     query,
-    getById,
+    get,
     save,
     remove,
+    create,
 }
 
 function _getBugs() {
@@ -32,44 +34,62 @@ function query() {
     const prmBugs = _getBugs()
     return prmBugs
 }
-function getById(bugId) {
+function get(bugId) {
     const prmBug = query()
         .then(bugs => {
-            return bugs.find(bug => bug._id === bugId)
+            const bug = bugs.find(bug => bug._id === bugId)
+            if (! bug) return Promise.reject('No such bug')
+            return bug
         })
-        .catch(err => console.error(err))
     return prmBug
 }
 
-function remove(bugId) {
+function save(bug) {
     const prm = query()
         .then(bugs => {
-            const newBugs = bugs.filter(bug => bug._id !== bugId)
-            const prm = _saveBugs(newBugs)
-            return prm
+            if (bug._id) {
+                const bugIdx = bugs.findIndex(_bug => {
+                    return _bug._id === bug._id
+                })
+                if (bugIdx < 0) return Promise.reject('No such bug')
+                bugs[bugIdx] = bug
+        } else {
+                bug = create(bug.title, bug.severity, bug.description)
+                bug._id = utilService.makeId()
+                bugs.push(bug)
+            }
+            const prmBug = _saveBugs(bugs)
+                .then(() => bug)
+            return prmBug
         })
-        .catch(err => console.error(err))
     return prm
 }
 
-function save(bug) {
+function remove(bugId) {
+    const prmBug =
     query()
         .then(bugs => {
-            let prm
-            if (bug._id) {
-                const bugIdx = bugs.findIdx(_bug => _bug._id === bug._id)
-                bugs[bugIdx] = bug
-            } else {
-                bugs.push(bug)
-            }
-            prm = _saveBugs(bugs)
-            return prm
+            const bugIdx = bugs.findIndex(bug => bug._id === bugId)
+            if (bugIdx < 0) return Promise.reject('No such bug')
+            const bug = bugs[bugIdx]
+            bugs.splice(bugIdx, 1)
+            const prmBug = _saveBugs(bugs)
+                .then(() => bug)
+            return prmBug
         })
-        .catch(err => console.error(err))
+    return prmBug
 }
 
-
-
+function create(title='', severity, description='', _id) {
+    if (isNaN(severity)) severity = 0
+    const newBug = {
+        title,
+        severity,
+        description,
+        _id,
+    }
+    return newBug
+}
 
 function _createBugs() {
     const prm = _getBugs()

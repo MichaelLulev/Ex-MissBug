@@ -1,68 +1,52 @@
 import { storageService } from './async-storage.service.js'
-import { utilService } from './util.service.js'
 
-const STORAGE_KEY = 'bugDB'
-
-_createBugs()
+const API_BASE_URL = '/api/bug/'
 
 export const bugService = {
     query,
-    getById,
+    get,
     save,
     remove,
+    create,
 }
-
 
 function query() {
-    return storageService.query(STORAGE_KEY)
-}
-function getById(bugId) {
-    return storageService.get(STORAGE_KEY, bugId)
+    const prmBugs = axios.get(API_BASE_URL)
+        .then(res => res.data)
+        .then(bugs => {
+            return bugs
+        })
+    return prmBugs
 }
 
-function remove(bugId) {
-    return storageService.remove(STORAGE_KEY, bugId)
+function get(bugId) {
+    const prmBug = axios.get(API_BASE_URL + bugId)
+        .then(res => res.data)
+    return prmBug
 }
 
 function save(bug) {
-    if (bug._id) {
-        return storageService.put(STORAGE_KEY, bug)
-    } else {
-        return storageService.post(STORAGE_KEY, bug)
-    }
+    var queryParams
+    queryParams += `?title=${bug.title}`
+    queryParams += `&severity=${bug.sevirity}`
+    queryParams += `&description=${bug.description}`
+    queryParams += `&id=${bug._id}`
+    const prmBug = axios.get(API_BASE_URL + '/save' + queryParams)
+        .then(res => res.data)
+    return prmBug
 }
 
+function remove(bugId) {
+    const prmBug = axios.get(API_BASE_URL + bugId + '/remove')
+        .then(res => res.data)
+    return prmBug
+}
 
-
-
-function _createBugs() {
-    let bugs = utilService.loadFromStorage(STORAGE_KEY)
-    if (!bugs || !bugs.length) {
-        bugs = [
-            {
-                title: "Infinite Loop Detected",
-                severity: 4,
-                _id: "1NF1N1T3"
-            },
-            {
-                title: "Keyboard Not Found",
-                severity: 3,
-                _id: "K3YB0RD"
-            },
-            {
-                title: "404 Coffee Not Found",
-                severity: 2,
-                _id: "C0FF33"
-            },
-            {
-                title: "Unexpected Response",
-                severity: 1,
-                _id: "G0053"
-            }
-        ]
-        utilService.saveToStorage(STORAGE_KEY, bugs)
+function create(title='', sevirity=0, description='') {
+    const newBug = {
+        title,
+        sevirity,
+        description,
     }
-
-
-
+    return newBug
 }
