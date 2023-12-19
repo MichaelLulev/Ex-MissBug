@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { json } from 'express'
 import cookieParser from 'cookie-parser'
 import { bugService } from './services/bug.service.js'
 
@@ -31,7 +31,17 @@ app.get('/api/bug/save', (req, res) => {
 app.get('/api/bug/:bugId', (req, res) => {
     const bugId = req.params.bugId
     bugService.get(bugId)
-        .then(bug => res.send(bug))
+        .then(bug => {
+            let bugsVisited = req.cookies.bugsVisited || '[]'
+            bugsVisited = JSON.parse(bugsVisited)
+            bugsVisited.push(bug._id)
+            bugsVisited = Array.from(new Set(bugsVisited))
+            const strBugsVisited = JSON.stringify(bugsVisited)
+            console.log(strBugsVisited)
+            res.cookie('bugsVisited', strBugsVisited, { maxAge: 7 * 1000 })
+            if (3 < bugsVisited.length) return res.status(401).send('Wait for a bit')
+            return res.send(bug)
+        })
         .catch(err => {
             console.error(err)
             return res.status(400).send('Cannot get bug ' + bugId)

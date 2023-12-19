@@ -17,7 +17,6 @@ export const bugService = {
 function _getBugs() {
     const prmBugs = fs.readFile(BUGS_PATH, 'utf-8')
         .then(res => JSON.parse(res))
-        .catch(err => console.error('Can\'t read bugs file'))
     return prmBugs
 }
 
@@ -26,12 +25,23 @@ function _saveBugs(bugs=[]) {
     const prm = fs.stat(BUGS_DIR)
         .catch(() => fs.mkdir(BUGS_DIR))
         .then(() => fs.writeFile(BUGS_PATH, strBugs, 'utf-8'))
-        .catch(err => console.error(err))
     return prm
 }
 
 function query() {
     const prmBugs = _getBugs()
+        .then(bugs => {
+            if (! bugs || ! bugs.length) {
+                console.log('There are no bugs!, creating bugs :)')
+                bugs = _createBugs()
+                var prmBugs = _saveBugs(bugs)
+                    .then(() => bugs)
+            } else {
+                console.log('There are bugs! everything is OK!')
+                var prmBugs = Promise.resolve(bugs)
+            }
+            return prmBugs
+        })
     return prmBugs
 }
 function get(bugId) {
@@ -92,37 +102,27 @@ function create(title='', severity, description='', _id) {
 }
 
 function _createBugs() {
-    const prm = _getBugs()
-        .then(bugs => {
-            if (! bugs || ! bugs.length) {
-                console.log('There are no bugs!, creating bugs :)')
-                bugs = [
-                    {
-                        title: "Infinite Loop Detected",
-                        severity: 4,
-                        _id: "1NF1N1T3"
-                    },
-                    {
-                        title: "Keyboard Not Found",
-                        severity: 3,
-                        _id: "K3YB0RD"
-                    },
-                    {
-                        title: "404 Coffee Not Found",
-                        severity: 2,
-                        _id: "C0FF33"
-                    },
-                    {
-                        title: "Unexpected Response",
-                        severity: 1,
-                        _id: "G0053"
-                    }
-                ]
-                return _saveBugs(bugs)
-            } else {
-                console.log('There are bugs! everything is OK!')
-            }
-        })
-        .catch(err => console.error(err))
-    return prm
+    const newBugs = [
+        {
+            title: "Infinite Loop Detected",
+            severity: 4,
+            _id: "1NF1N1T3"
+        },
+        {
+            title: "Keyboard Not Found",
+            severity: 3,
+            _id: "K3YB0RD"
+        },
+        {
+            title: "404 Coffee Not Found",
+            severity: 2,
+            _id: "C0FF33"
+        },
+        {
+            title: "Unexpected Response",
+            severity: 1,
+            _id: "G0053"
+        }
+    ]
+    return newBugs
 }

@@ -12,7 +12,13 @@ export function BugIndex() {
     }, [])
 
     function loadBugs() {
-        bugService.query().then(setBugs)
+        bugService.query()
+            .then(bugs => {
+                setBugs(bugs)
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }
 
     function onRemoveBug(bugId) {
@@ -35,9 +41,8 @@ export function BugIndex() {
             title: prompt('Bug title?'),
             severity: +prompt('Bug severity?'),
         }
-        bugService
-            .save(bug)
-            .then((savedBug) => {
+        bugService.save(bug)
+            .then(savedBug => {
                 console.log('Added Bug', savedBug)
                 setBugs([...bugs, savedBug])
                 showSuccessMsg('Bug added')
@@ -55,7 +60,7 @@ export function BugIndex() {
         const bugToSave = { ...bug, severity, description }
         bugService
             .save(bugToSave)
-            .then((savedBug) => {
+            .then(savedBug => {
                 console.log('Updated Bug:', savedBug)
                 const bugsToUpdate = bugs.map(bug => {
                     return bug._id === savedBug._id ? savedBug : bug

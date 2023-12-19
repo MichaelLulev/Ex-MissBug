@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 const API_BASE_URL = '/api/bug/'
 
 export const bugService = {
@@ -10,7 +12,9 @@ export const bugService = {
 
 function query() {
     const prmBugs = axios.get(API_BASE_URL)
-        .then(res => res.data)
+        .then(res => {
+            return res.data
+        })
         .then(bugs => {
             return bugs
         })
@@ -24,13 +28,20 @@ function get(bugId) {
 }
 
 function save(bug) {
-    var queryParams
-    queryParams += `?title=${bug.title}`
-    queryParams += `&severity=${bug.sevirity}`
-    queryParams += `&description=${bug.description}`
-    queryParams += `&id=${bug._id}`
-    const prmBug = axios.get(API_BASE_URL + '/save' + queryParams)
-        .then(res => res.data)
+    console.log('saving bug!')
+    var queryParams = ''
+    queryParams += `?title=${bug.title || ''}`
+    queryParams += `&severity=${bug.sevirity || 0}`
+    queryParams += `&description=${bug.description || ''}`
+    queryParams += `&id=${bug._id || ''}`
+    const url = API_BASE_URL + 'save' + queryParams
+    const prmBug = axios.get(url)
+        .then(res => {
+            return res.data
+        })
+        .catch(err => {
+            console.error(err)
+        })
     return prmBug
 }
 
