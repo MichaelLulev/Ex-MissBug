@@ -13,10 +13,15 @@ export const bugService = {
 
 function _loadBugs() {
     return fs.readFile(BUGS_PATH, 'utf-8')
+        .catch(err => {
+            console.error(err)
+            return null
+        })
         .then(res => JSON.parse(res))
 }
 
 function _saveBugs(bugs=[]) {
+    console.log('saving bugs')
     const strBugs = JSON.stringify(bugs, null, '\t')
     return fs.stat(BUGS_DIR)
         .catch(() => fs.mkdir(BUGS_DIR))
@@ -34,6 +39,9 @@ function query() {
                 console.log('There are bugs! everything is OK!')
                 return bugs
             }
+        })
+        .catch(err => {
+            console.error(err)
         })
 }
 

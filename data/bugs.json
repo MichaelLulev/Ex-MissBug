@@ -1,14 +1,12 @@
 [
 	{
 		"title": "Infinite Loop Detected",
-		"severity": 0,
-		"description": "Cookie!",
+		"severity": 4,
 		"_id": "1NF1N1T3"
 	},
 	{
 		"title": "Keyboard Not Found",
-		"severity": 0,
-		"description": "Haha!",
+		"severity": 3,
 		"_id": "K3YB0RD"
 	},
 	{
@@ -17,9 +15,8 @@
 		"_id": "C0FF33"
 	},
 	{
-		"title": "MUUUUKKKIIII!!!",
-		"severity": 0,
-		"description": "",
-		"_id": "uoNHJV"
+		"title": "Unexpected Response",
+		"severity": 1,
+		"_id": "G0053"
 	}
 ]

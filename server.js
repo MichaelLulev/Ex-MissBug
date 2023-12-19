@@ -69,7 +69,7 @@ app.get('/api/bug/:bugId', (req, res) => {
             bugsVisited.push(bug._id)
             bugsVisited = Array.from(new Set(bugsVisited))
             console.log(bugsVisited)
-            res.cookie('bugsVisited', bugsVisited, { maxAge: 7 * 1000 })
+            res.cookie('bugsVisited', bugsVisited, { maxAge: 60 * 1000 })
             if (3 < bugsVisited.length) return res.status(401).send('Wait for a bit')
             return res.send(bug)
         })
@@ -92,4 +92,6 @@ app.delete('/api/bug/:bugId', (req, res) => {
         })
 })
 
-app.listen(3030, () => console.log('Server ready at port 3030'))
+const PORT = 3031
+
+app.listen(PORT, () => console.log(`Server ready at port ${PORT}`))
