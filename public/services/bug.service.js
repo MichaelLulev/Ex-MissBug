@@ -1,5 +1,3 @@
-import { storageService } from './async-storage.service.js'
-
 const API_BASE_URL = '/api/bug/'
 
 export const bugService = {
