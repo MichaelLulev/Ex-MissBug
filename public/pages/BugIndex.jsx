@@ -44,7 +44,11 @@ export function BugIndex() {
         bugService.save(bug)
             .then(savedBug => {
                 console.log('Added Bug', savedBug)
-                setBugs([...bugs, savedBug])
+                if (bugs.length === 0) {
+                    loadBugs()
+                } else {
+                    setBugs([...bugs, savedBug])
+                }
                 showSuccessMsg('Bug added')
             })
             .catch((err) => {
