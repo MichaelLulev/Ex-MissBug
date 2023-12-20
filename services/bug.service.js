@@ -55,16 +55,19 @@ function get(bugId) {
 }
 
 function save(bug) {
+    console.log(bug)
     return query()
         .then(bugs => {
             if (bug._id) {
                 const bugIdx = bugs.findIndex(_bug => _bug._id === bug._id)
+                console.log(bugIdx)
                 if (bugIdx < 0) return Promise.reject('No such bug')
                 bugs[bugIdx] = bug
             } else {
                 bug._id = utilService.makeId()
                 bugs.unshift(bug)
             }
+            console.log(bug)
             return _saveBugs(bugs).then(() => bug)
         })
 }
