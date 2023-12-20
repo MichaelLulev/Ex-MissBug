@@ -18,11 +18,11 @@ app.get('/api/bug', (req, res) => {
         createdBefore: +req.query.createdBefore,
     }
     const sortBy = {
-        field: req.query.sortByField,
-        direction: +req.query.sortByDirection,
+        field: req.query.field,
+        direction: +req.query.direction,
     }
     const pageInfo = {
-        idx: +req.query.pageIdx,
+        idx: +req.query.idx,
         bugsPerPage: +req.query.bugsPerPage,
     }
     bugService.query(filterBy, sortBy, pageInfo)

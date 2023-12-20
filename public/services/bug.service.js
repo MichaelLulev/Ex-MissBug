@@ -2,15 +2,22 @@ import axios from 'axios'
 
 const API_BASE_URL = '/api/bug/'
 
+const SECOND = 1000
+const MINUTE = 60 * SECOND
+const HOUR = 60 * MINUTE
+const DAY = 24 * HOUR
+const WEEK = 7 * DAY
+
 export const bugService = {
     query,
     get,
     save,
     remove,
+    getDefaultFilterBy,
 }
 
-function query() {
-    const prmBugs = axios.get(API_BASE_URL)
+function query(filterBy) {
+    const prmBugs = axios.get(API_BASE_URL, { params: filterBy })
         .then(res => {
             return res.data
         })
@@ -43,4 +50,15 @@ function remove(bugId) {
         .then(res => {
             return res.data
         })
+}
+
+function getDefaultFilterBy() {
+    const defaultFitlerBy = {
+        text: '',
+        createdAfter: Date.now() - WEEK,
+        createdBefore: Date.now() + WEEK,
+        minSeverity: 0,
+        maxSeverity: 5,
+    }
+    return defaultFitlerBy
 }

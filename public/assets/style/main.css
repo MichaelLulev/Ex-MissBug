@@ -61,6 +61,9 @@ nav a:hover {
     background-color: rgb(216, 59, 59);
 }
 
+.filter label {
+    display: block;
+}
 
 .bug-list {
     list-style: none;

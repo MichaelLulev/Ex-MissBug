@@ -1,18 +1,22 @@
 import { bugService } from '../services/bug.service.js'
 import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 import { BugList } from '../cmps/BugList.jsx'
+import { Filter } from '../cmps/Filter.jsx'
 
 const { useState, useEffect } = React
 
 export function BugIndex() {
     const [bugs, setBugs] = useState(null)
+    const [filterBy, setFilterBy] = useState(bugService.getDefaultFilterBy())
+    const [sortBy, setSortBy] = useState({})
+    const [pageInfo, setPageInfo] = useState({})
 
     useEffect(() => {
         loadBugs()
-    }, [])
+    }, [filterBy])
 
     function loadBugs() {
-        bugService.query()
+        bugService.query(filterBy)
             .then(bugs => {
                 setBugs(bugs)
             })
@@ -78,10 +82,30 @@ export function BugIndex() {
             })
     }
 
+    function onSetFilterBy(newFilterBy) {
+        setFilterBy(prev => ({ ...prev, ...newFilterBy}))
+    }
+
+    function onSetSortBy(newSortBy) {
+        setSortBy(prev => ({ ...prev, ...newSortBy}))
+    }
+
+    function onSetPageInfo(newPageInfo) {
+        setPageInfo(prev => ({ ...prev, ...newPageInfo}))
+    }
+
+    const filterProps = {
+        filterBy,
+        onSetFilterBy,
+        onSetSortBy,
+        onSetPageInfo,
+    }
+
     return (
         <main>
             <h3>Bugs App</h3>
             <main>
+                <Filter { ...filterProps } />
                 <button onClick={onAddBug}>Add Bug ⛐</button>
                 <BugList bugs={bugs} onRemoveBug={onRemoveBug} onEditBug={onEditBug} />
             </main>
