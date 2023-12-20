@@ -52,7 +52,7 @@ function filter(bugs, filterBy) {
     return bugs.filter(bug => {
         const { title, severity, description, createdAt, labels } = bug
         const text =
-            filterBy.text ? Regex(filterBy.text, 'i') : null
+            filterBy.text ? RegExp(filterBy.text, 'i') : null
         const isTextInTitle =
             ! text || text.test(title)
         const isTextInDescription =
@@ -60,10 +60,10 @@ function filter(bugs, filterBy) {
         const isTextInLabels =
             ! text || labels.some(label => text.test(label))
         const isInDateRange =
-            ! createdAfter || ! createdBefore || (createdAfter <= createdAt) && (createdAt <= createdBefore)
+            isNaN(createdAfter) || isNaN(createdBefore) || (createdAfter <= createdAt) && (createdAt <= createdBefore)
         const isInSeverityRange =
-            ! minSeverity || ! maxSeverity || (minSeverity <= severity) && (severity <= maxSeverity)
-        return isTextInTitle || isTextInDescription || isTextInLabels || isInDateRange || isInSeverityRange
+            isNaN(minSeverity) || isNaN(maxSeverity) || (minSeverity <= severity) && (severity <= maxSeverity)
+        return (isTextInTitle || isTextInDescription || isTextInLabels) && isInDateRange && isInSeverityRange
     })
 }
 
@@ -97,7 +97,6 @@ function get(bugId) {
 }
 
 function save(bug) {
-    console.log(bug)
     return query()
         .then(bugs => {
             if (bug._id) {
@@ -153,6 +152,7 @@ function _createNewBugs() {
             severity: 4,
             description: "This bug turns the code into a never-ending story. It's like Groundhog Day, but without Bill Murray and with more screaming at the monitor.",
             labels: [],
+            createdAt: Date.now(),
         },
         {
             _id: "K3YB0RD",
@@ -160,6 +160,7 @@ function _createNewBugs() {
             severity: 3,
             description: "The computer insists there's no keyboard. We suggest trying to convince it by typing 'I swear, the keyboard is right here,' but that hasn't worked so far.",
             labels: [],
+            createdAt: Date.now(),
         },
         {
             _id: "C0FF33",
@@ -167,6 +168,7 @@ function _createNewBugs() {
             severity: 2,
             description: "Critical error where the developer's coffee cup is empty. Productivity drops to 0%, accompanied by mild panic and existential dread.",
             labels: [],
+            createdAt: Date.now(),
         },
         {
             _id: "G0053",
@@ -174,6 +176,7 @@ function _createNewBugs() {
             severity: 1,
             description: "The software just gave a response that was so unexpected, it might as well have been a plot twist in a soap opera. Maybe it's time to ask if it's feeling okay?",
             labels: [],
+            createdAt: Date.now(),
         },
         {
             _id: "QU4NTUM",
@@ -181,6 +184,7 @@ function _createNewBugs() {
             severity: 3,
             description: "This variable is simultaneously undefined and defined until observed. It defies logic and is contemplating a career in quantum physics.",
             labels: [],
+            createdAt: Date.now(),
         },
         {
             _id: "BR41NZ",
@@ -188,6 +192,7 @@ function _createNewBugs() {
             severity: 4,
             description: "These processes are dead but not really dead. They wander aimlessly through the system, occasionally groaning for CPU brains.",
             labels: [],
+            createdAt: Date.now(),
         },
         {
             _id: "P03TRY",
@@ -195,6 +200,7 @@ function _createNewBugs() {
             severity: 2,
             description: "The CSS has become self-aware and is now only communicating in haikus. Beautiful, yet utterly unhelpful for layout issues.",
             labels: [],
+            createdAt: Date.now(),
         },
         {
             _id: "GH05T",
@@ -202,6 +208,7 @@ function _createNewBugs() {
             severity: 1,
             description: "Buttons are clicking themselves. It's either a coding error or the office is haunted. The jury is still out.",
             labels: [],
+            createdAt: Date.now(),
         },
         {
             _id: "L04D1NG",
@@ -209,6 +216,7 @@ function _createNewBugs() {
             severity: 3,
             description: "This loading screen has been loading for so long, it's now an accepted part of the UI. Users think it's a feature.",
             labels: [],
+            createdAt: Date.now(),
         },
         {
             _id: "CUR50R",
@@ -216,6 +224,7 @@ function _createNewBugs() {
             severity: 2,
             description: "The cursor randomly teleports across the screen, leading to a fun game of 'find the cursor'. It's not a bug, it's a feature!",
             labels: [],
+            createdAt: Date.now(),
         }
     ]
     return newBugs

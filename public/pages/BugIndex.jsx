@@ -62,9 +62,9 @@ export function BugIndex() {
     }
 
     function onEditBug(bug) {
-        var severity = prompt('New severity?')
-        severity = ! severity ? bug.severity : +severity
-        const description = prompt('New descripiton', bug.description)
+        var severity = +prompt('New severity?', bug.severity)
+        severity = isNaN(severity) ? bug.severity : severity
+        const description = prompt('New descripiton', bug.description) || bug.description
         const bugToSave = { ...bug, severity, description }
         bugService
             .save(bugToSave)

@@ -4,7 +4,7 @@
 export function Filter(props) {
 
     function onChangeFilterBy(ev) {
-        const { maxSeverity, minSeverity } = props.filterBy
+        const { maxSeverity, minSeverity, createdAfter, createdBefore } = props.filterBy
         const name = ev.target.name
         let value = ev.target.value
         if (['createdAfter', 'createdBefore'].includes(name)) {
@@ -12,6 +12,8 @@ export function Filter(props) {
         }
         if (name === 'minSeverity' && maxSeverity < value) value = maxSeverity
         else if (name === 'maxSeverity' && value < minSeverity) value = minSeverity
+        else if (name === 'createdAfter' && createdBefore < value) value = createdBefore
+        else if (name === 'createdBefore' && value < createdAfter) value = createdAfter
         const newFilterBy = { [name]: value }
         props.onSetFilterBy(newFilterBy)
     }
