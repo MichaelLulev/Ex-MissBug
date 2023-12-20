@@ -46,14 +46,9 @@ app.get('/api/bug/:bugId', (req, res) => {
 })
 
 // PUT a bug
-app.put('/api/bug/:bugId', (req, res) => {
-    const bugId = req.params.bugId
-    if (! bugId) {
-        res.status(400).send(`Cannot put bug with no id`)
-        return
-    }
+app.put('/api/bug', (req, res) => {
     const updatedBug = {
-        _id: bugId,
+        _id: req.body._id,
         title: req.body.title,
         severity: req.body.severity,
         description: req.body.description,

@@ -7,7 +7,6 @@ export const bugService = {
     get,
     save,
     remove,
-    create,
 }
 
 function query() {
@@ -29,24 +28,19 @@ function get(bugId) {
 
 function save(bug) {
     console.log('saving bug!')
-    var queryParams = ''
-    queryParams += `?title=${bug.title || ''}`
-    queryParams += `&severity=${bug.sevirity || 0}`
-    queryParams += `&description=${bug.description || ''}`
-    queryParams += `&id=${bug._id || ''}`
-    const url = API_BASE_URL + 'save' + queryParams
-    const prmBug = axios.get(url)
+    const saveFunc = bug._id ? axios.put : axios.post
+    return saveFunc(API_BASE_URL, bug)
         .then(res => {
             return res.data
         })
         .catch(err => {
             console.error(err)
         })
-    return prmBug
 }
 
 function remove(bugId) {
-    const prmBug = axios.get(API_BASE_URL + bugId + '/remove')
-        .then(res => res.data)
-    return prmBug
+    return axios.delete(API_BASE_URL + bugId)
+        .then(res => {
+            return res.data
+        })
 }
