@@ -17,7 +17,9 @@ app.get('/api/bug', (req, res) => {
         createdAfter: req.query.createdAfter,
         createdBefore: req.query.createdBefore,
     }
-    bugService.query(filterBy)
+    const sortBy = req.query.sortBy
+    const pageIdx = req.query.pageIdx
+    bugService.query(filterBy, sortBy, pageIdx)
         .then(bugs => res.send(bugs))
         .catch(err => {
             console.error(err)

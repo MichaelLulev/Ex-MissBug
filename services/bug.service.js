@@ -28,7 +28,7 @@ function _saveBugs(bugs=[]) {
         .then(() => fs.writeFile(BUGS_PATH, strBugs, 'utf-8'))
 }
 
-function query() {
+function query(filterBy, sortBy, pageIdx) {
     return _loadBugs()
         .then(bugs => {
             if (! bugs || bugs.length === 0) {
