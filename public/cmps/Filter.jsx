@@ -20,6 +20,7 @@ export function Filter(props) {
 
     return (
         <section className="filter">
+            <h3>Filter</h3>
             <label>
                 <span>Text: </span>
                 <input

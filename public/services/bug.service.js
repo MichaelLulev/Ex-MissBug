@@ -14,10 +14,11 @@ export const bugService = {
     save,
     remove,
     getDefaultFilterBy,
+    getDefaultSortBy,
 }
 
-function query(filterBy) {
-    const prmBugs = axios.get(API_BASE_URL, { params: filterBy })
+function query(filterBy={}, sortBy={}, pageInfo={}) {
+    const prmBugs = axios.get(API_BASE_URL, { params: { ...filterBy, ...sortBy, ...pageInfo } })
         .then(res => {
             return res.data
         })
@@ -61,4 +62,12 @@ function getDefaultFilterBy() {
         maxSeverity: 5,
     }
     return defaultFitlerBy
+}
+
+function getDefaultSortBy() {
+    const defaultSortBy = {
+        field: 'title',
+        isAscending: false,
+    }
+    return defaultSortBy
 }

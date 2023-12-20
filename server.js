@@ -19,7 +19,7 @@ app.get('/api/bug', (req, res) => {
     }
     const sortBy = {
         field: req.query.field,
-        direction: +req.query.direction,
+        isAscending: req.query.isAscending === 'true',
     }
     const pageInfo = {
         idx: +req.query.idx,

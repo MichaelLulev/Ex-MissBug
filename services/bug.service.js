@@ -13,11 +13,11 @@ export const bugService = {
 
 function _loadBugs() {
     return fs.readFile(BUGS_PATH, 'utf-8')
+        .then(res => JSON.parse(res))
         .catch(err => {
             console.error(err)
             return null
         })
-        .then(res => JSON.parse(res))
 }
 
 function _saveBugs(bugs=[]) {
@@ -68,13 +68,16 @@ function filter(bugs, filterBy) {
 }
 
 function sort(bugs, sortBy) {
+    console.log('sorting', sortBy)
     if (! sortBy) return bugs
-    const { field, direction } = sortBy
-    if (! field || ! [1, -1].includes(direction)) return  bugs
+    const { field, isAscending } = sortBy
+    console.log(field, isAscending)
+    if (! field || typeof isAscending !== 'boolean') return  bugs
+    const dirMult = isAscending ? 1 : -1
+    console.log(field, dirMult)
     return bugs.sort((bug1, bug2) => {
-        if (field === title) return bug1.title.localeCompare(bug2.title) * direction
-        else if (field === severity) return (bug1.severity - bug2.severity) * direction
-        else if (field === createdAt) return (bug1.createdAt - bug2.createdAt) * direction
+        if (field === 'title') return bug1.title.localeCompare(bug2.title) * dirMult
+        return (bug1[field] - bug2[field]) * dirMult
     })
 }
 
@@ -112,6 +115,7 @@ function save(bug) {
                     if (value !== undefined) newBug[key] = bug[key]
                 }
                 newBug._id = utilService.makeId()
+                newBug.createdAt = Date.now()
                 bugs.unshift(newBug)
                 bug = newBug
             }
