@@ -1,5 +1,10 @@
 [
 	{
+		"title": "Cookie!",
+		"severity": 100,
+		"_id": "UZdPyp"
+	},
+	{
 		"title": "Infinite Loop Detected",
 		"severity": 4,
 		"_id": "1NF1N1T3",
