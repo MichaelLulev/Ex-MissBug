@@ -12,14 +12,20 @@ app.use(cookieParser())
 app.get('/api/bug', (req, res) => {
     const filterBy = {
         text: req.query.text,
-        minSeverity: req.query.minSeverity,
-        maxSeverity: req.query.maxSeverity,
-        createdAfter: req.query.createdAfter,
-        createdBefore: req.query.createdBefore,
+        minSeverity: +req.query.minSeverity,
+        maxSeverity: +req.query.maxSeverity,
+        createdAfter: +req.query.createdAfter,
+        createdBefore: +req.query.createdBefore,
     }
-    const sortBy = req.query.sortBy
-    const pageIdx = req.query.pageIdx
-    bugService.query(filterBy, sortBy, pageIdx)
+    const sortBy = {
+        field: req.query.sortByField,
+        direction: +req.query.sortByDirection,
+    }
+    const pageInfo = {
+        idx: +req.query.pageIdx,
+        bugsPerPage: +req.query.bugsPerPage,
+    }
+    bugService.query(filterBy, sortBy, pageInfo)
         .then(bugs => res.send(bugs))
         .catch(err => {
             console.error(err)
