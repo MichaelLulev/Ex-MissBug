@@ -58,6 +58,7 @@ app.put('/api/bug', (req, res) => {
         title: req.body.title,
         severity: req.body.severity,
         description: req.body.description,
+        labels: req.body.labels,
     }
     bugService.save(updatedBug)
         .then(bug => {
@@ -75,6 +76,7 @@ app.post('/api/bug', (req, res) => {
         title: req.body.title,
         severity: req.body.severity,
         description: req.body.description,
+        labels: req.body.labels,
     }
     bugService.save(newBug)
         .then(bug => {
@@ -89,17 +91,13 @@ app.post('/api/bug', (req, res) => {
 // DELETE a bug
 app.delete('/api/bug/:bugId', (req, res) => {
     const bugId = req.params.bugId
-    if (! bugId) {
-        res.status(400).send(`Cannot put bug with no id`)
-        return
-    }
     bugService.remove(bugId)
         .then(bug => {
-            return res.send(bug)
+            res.send(bug)
         })
         .catch(err => {
             console.error(err)
-            return res.status(400).send(`Cannot remove bug with id=${bugId}`)
+            res.status(400).send(`Cannot delete bug with id=${bugId}`)
         })
 })
 
