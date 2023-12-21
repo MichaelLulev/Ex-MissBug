@@ -155,7 +155,7 @@ function _createNewBugs() {
             title: "Infinite Loop Detected",
             severity: 4,
             description: "This bug turns the code into a never-ending story. It's like Groundhog Day, but without Bill Murray and with more screaming at the monitor.",
-            labels: [],
+            labels: ["EndlessFun", "WhyMe", "TimeTravelWoes", "GroundhogDayForever"],
             createdAt: Date.now(),
         },
         {
@@ -163,7 +163,7 @@ function _createNewBugs() {
             title: "Keyboard Not Found",
             severity: 3,
             description: "The computer insists there's no keyboard. We suggest trying to convince it by typing 'I swear, the keyboard is right here,' but that hasn't worked so far.",
-            labels: [],
+            labels: ["MysteryTech", "WhyMe", "GhostKeyboard", "TypingIntoTheVoid"],
             createdAt: Date.now(),
         },
         {
@@ -171,7 +171,7 @@ function _createNewBugs() {
             title: "404 Coffee Not Found",
             severity: 2,
             description: "Critical error where the developer's coffee cup is empty. Productivity drops to 0%, accompanied by mild panic and existential dread.",
-            labels: [],
+            labels: ["LifeSupport", "CrisisMode", "JavaNotFound", "CaffeineCrash"],
             createdAt: Date.now(),
         },
         {
@@ -179,7 +179,7 @@ function _createNewBugs() {
             title: "Unexpected Response",
             severity: 1,
             description: "The software just gave a response that was so unexpected, it might as well have been a plot twist in a soap opera. Maybe it's time to ask if it's feeling okay?",
-            labels: [],
+            labels: ["TwilightZone", "WhyMe", "DramaQueenSoftware", "PlotTwistError"],
             createdAt: Date.now(),
         },
         {
@@ -187,7 +187,7 @@ function _createNewBugs() {
             title: "Schrodinger's Variable",
             severity: 3,
             description: "This variable is simultaneously undefined and defined until observed. It defies logic and is contemplating a career in quantum physics.",
-            labels: [],
+            labels: ["QuantumLeap", "MysteryTech", "QuantumConundrum", "HereAndNotHere"],
             createdAt: Date.now(),
         },
         {
@@ -195,7 +195,7 @@ function _createNewBugs() {
             title: "Zombie Processes",
             severity: 4,
             description: "These processes are dead but not really dead. They wander aimlessly through the system, occasionally groaning for CPU brains.",
-            labels: [],
+            labels: ["UndeadThreads", "CrisisMode", "ZombieApocalypse"],
             createdAt: Date.now(),
         },
         {
@@ -203,7 +203,7 @@ function _createNewBugs() {
             title: "CSS Haiku Error",
             severity: 2,
             description: "The CSS has become self-aware and is now only communicating in haikus. Beautiful, yet utterly unhelpful for layout issues.",
-            labels: [],
+            labels: ["CreativeCoding", "TwilightZone", "PoeticJustice", "HaikuHavoc"],
             createdAt: Date.now(),
         },
         {
@@ -211,7 +211,7 @@ function _createNewBugs() {
             title: "The Phantom Click",
             severity: 1,
             description: "Buttons are clicking themselves. It's either a coding error or the office is haunted. The jury is still out.",
-            labels: [],
+            labels: ["GhostInTheMachine", "MysteryTech", "PoltergeistProblem"],
             createdAt: Date.now(),
         },
         {
@@ -219,7 +219,7 @@ function _createNewBugs() {
             title: "Eternal Loading Screen",
             severity: 3,
             description: "This loading screen has been loading for so long, it's now an accepted part of the UI. Users think it's a feature.",
-            labels: [],
+            labels: ["EndlessFun", "CrisisMode", "FeatureNotBug", "LoadingLimbo"],
             createdAt: Date.now(),
         },
         {
@@ -227,7 +227,7 @@ function _createNewBugs() {
             title: "Teleporting Cursor",
             severity: 2,
             description: "The cursor randomly teleports across the screen, leading to a fun game of 'find the cursor'. It's not a bug, it's a feature!",
-            labels: [],
+            labels: ["MagicTricks", "WhyMe", "CursorQuest", "MagicMouseTricks"],
             createdAt: Date.now(),
         }
     ]
