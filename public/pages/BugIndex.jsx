@@ -19,7 +19,7 @@ export function BugIndex() {
     }, [filterBy, sortBy, pageInfo])
 
     function loadBugs() {
-        bugService.query(filterBy, sortBy, pageInfo)
+        return bugService.query(filterBy, sortBy, pageInfo)
             .then(([bugs, newIsLastPage, lastPage]) => {
                 setBugs(bugs)
                 setIsLastPage(newIsLastPage)
@@ -35,9 +35,8 @@ export function BugIndex() {
             .remove(bugId)
             .then(() => {
                 console.log('Deleted Succesfully!')
-                const bugsToUpdate = bugs.filter((bug) => bug._id !== bugId)
-                setBugs(bugsToUpdate)
                 showSuccessMsg('Bug removed')
+                return loadBugs()
             })
             .catch((err) => {
                 console.log('Error from onRemoveBug ->', err)
@@ -53,18 +52,15 @@ export function BugIndex() {
             labels: [],
         }
         do {
-            labels.push(prompt('Add a label'))
+            var label = prompt('Add a label')
+            bug.labels.push(label)
         } while (label)
-        labels.pop()
+        bug.labels.pop()
         bugService.save(bug)
             .then(savedBug => {
                 console.log('Added Bug', savedBug)
-                if (bugs.length === 0) {
-                    loadBugs()
-                } else {
-                    setBugs([...bugs, savedBug])
-                }
                 showSuccessMsg('Bug added')
+                return loadBugs()
             })
             .catch((err) => {
                 console.log('Error from onAddBug ->', err)
@@ -73,7 +69,7 @@ export function BugIndex() {
     }
 
     function onEditBug(bug) {
-        const title = propmt('New title', bug.title) || bug.title
+        const title = prompt('New title', bug.title) || bug.title
         const severityInput = +prompt('New severity', bug.severity)
         const severity = isNaN(severityInput) ? bug.severity : severityInput
         const description = prompt('New descripiton', bug.description) || bug.description
