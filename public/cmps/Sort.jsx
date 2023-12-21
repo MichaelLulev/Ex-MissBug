@@ -8,7 +8,6 @@ export function Sort(props) {
         const name = ev.target.name
         let value = ev.target.value
         if (name === 'isAscending') value = ev.target.checked
-        console.log(name, value)
         props.onSetSortBy({ [name]: value })
     }
 

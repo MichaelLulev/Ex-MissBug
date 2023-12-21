@@ -68,13 +68,10 @@ function filter(bugs, filterBy) {
 }
 
 function sort(bugs, sortBy) {
-    console.log('sorting', sortBy)
     if (! sortBy) return bugs
     const { field, isAscending } = sortBy
-    console.log(field, isAscending)
     if (! field || typeof isAscending !== 'boolean') return  bugs
     const dirMult = isAscending ? 1 : -1
-    console.log(field, dirMult)
     return bugs.sort((bug1, bug2) => {
         if (field === 'title') return bug1.title.localeCompare(bug2.title) * dirMult
         return (bug1[field] - bug2[field]) * dirMult
@@ -83,11 +80,14 @@ function sort(bugs, sortBy) {
 
 function getPage(bugs, pageInfo) {
     if (! pageInfo) return bugs
-    const idx = pageInfo.idx || 0
+    let idx = pageInfo.idx || 0
     const bugsPerPage = pageInfo.bugsPerPage || bugs.length
+    const lastPage = Math.ceil(bugs.length / bugsPerPage)
+    // const startIdx = Math.min(idx, lastPage - 1) * bugsPerPage
     const startIdx = idx * bugsPerPage
     const endIdx = startIdx + bugsPerPage
-    return bugs.slice(startIdx, endIdx) 
+    const isLastPage = (bugs.length === 0) || lastPage <= idx + 1
+    return [bugs.slice(startIdx, endIdx), isLastPage, lastPage]
 }
 
 function get(bugId) {

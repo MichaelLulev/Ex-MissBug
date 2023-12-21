@@ -3,6 +3,7 @@ import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 import { BugList } from '../cmps/BugList.jsx'
 import { Filter } from '../cmps/Filter.jsx'
 import { Sort } from '../cmps/Sort.jsx'
+import { Page } from '../cmps/Page.jsx'
 
 const { useState, useEffect } = React
 
@@ -10,16 +11,19 @@ export function BugIndex() {
     const [bugs, setBugs] = useState(null)
     const [filterBy, setFilterBy] = useState(bugService.getDefaultFilterBy())
     const [sortBy, setSortBy] = useState(bugService.getDefaultSortBy())
-    const [pageInfo, setPageInfo] = useState({})
+    const [pageInfo, setPageInfo] = useState(bugService.getDefaultPageInfo())
+    const [isLastPage, setIsLastPage] = useState(false)
 
     useEffect(() => {
         loadBugs()
-    }, [filterBy, sortBy])
+    }, [filterBy, sortBy, pageInfo])
 
     function loadBugs() {
-        bugService.query(filterBy, sortBy)
-            .then(bugs => {
+        bugService.query(filterBy, sortBy, pageInfo)
+            .then(([bugs, newIsLastPage, lastPage]) => {
                 setBugs(bugs)
+                setIsLastPage(newIsLastPage)
+                if (newIsLastPage && lastPage - 1 < pageInfo.idx) onSetPageInfo({ idx: lastPage - 1 })
             })
             .catch(err => {
                 console.log(err)
@@ -43,9 +47,15 @@ export function BugIndex() {
 
     function onAddBug() {
         const bug = {
-            title: prompt('Bug title?'),
-            severity: +prompt('Bug severity?'),
+            title: prompt('Bug title'),
+            severity: +prompt('Bug severity'),
+            description: prompt('Bug description'),
+            labels: [],
         }
+        do {
+            labels.push(prompt('Add a label'))
+        } while (label)
+        labels.pop()
         bugService.save(bug)
             .then(savedBug => {
                 console.log('Added Bug', savedBug)
@@ -63,10 +73,11 @@ export function BugIndex() {
     }
 
     function onEditBug(bug) {
-        var severity = +prompt('New severity?', bug.severity)
-        severity = isNaN(severity) ? bug.severity : severity
+        const title = propmt('New title', bug.title) || bug.title
+        const severityInput = +prompt('New severity', bug.severity)
+        const severity = isNaN(severityInput) ? bug.severity : severityInput
         const description = prompt('New descripiton', bug.description) || bug.description
-        const bugToSave = { ...bug, severity, description }
+        const bugToSave = { ...bug, title, severity, description }
         bugService
             .save(bugToSave)
             .then(savedBug => {
@@ -101,8 +112,10 @@ export function BugIndex() {
             <main>
                 <Filter filterBy={filterBy} onSetFilterBy={onSetFilterBy} />
                 <Sort sortBy={sortBy} onSetSortBy={onSetSortBy} />
+                <Page pageInfo={pageInfo} onSetPageInfo={onSetPageInfo} isLastPage={isLastPage} />
                 <button onClick={onAddBug}>Add Bug ⛐</button>
                 <BugList bugs={bugs} onRemoveBug={onRemoveBug} onEditBug={onEditBug} />
+                <Page pageInfo={pageInfo} onSetPageInfo={onSetPageInfo} isLastPage={isLastPage} />
             </main>
         </main>
     )

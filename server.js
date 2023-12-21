@@ -26,7 +26,7 @@ app.get('/api/bug', (req, res) => {
         bugsPerPage: +req.query.bugsPerPage,
     }
     bugService.query(filterBy, sortBy, pageInfo)
-        .then(bugs => res.send(bugs))
+        .then(([bugs, isLastPage, lastPage]) => res.send([bugs, isLastPage, lastPage]))
         .catch(err => {
             console.error(err)
             res.status(400).send('Cannod get bugs')
