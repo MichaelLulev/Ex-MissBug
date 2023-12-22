@@ -1,12 +1,16 @@
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import { bugService } from './services/bug.service.js'
+import { userService } from './services/user.service.js'
 
 const app = express()
 
 app.use(express.static('public'))
 app.use(express.json())
 app.use(cookieParser())
+
+
+// Bug
 
 // GET all bugs
 app.get('/api/bug', (req, res) => {
@@ -99,6 +103,59 @@ app.delete('/api/bug/:bugId', (req, res) => {
             console.error(err)
             res.status(400).send(`Cannot delete bug with id=${bugId}`)
         })
+})
+
+
+// User
+
+app.get('/api/user', (req, res) => {
+    userService.query()
+        .then(users => res.send(users))
+        .catch(err => console.error(err) || res.status(400).send('Cannot get users'))
+})
+
+// Signup
+app.post('/api/auth/signup', (req, res) => {
+    const credentials = req.body
+    userService.save(credentials)
+        .then(user => {
+            if (user) {
+                const loginToken = userService.getLoginToken(user)
+                res.cookie('loginToken', loginToken)
+                res.send(user)
+            } else {
+                res.status(400).send('Cannot signup')
+            }
+        })
+})
+
+// Login
+app.post('/api/auth/login', (req, res) => {
+    const credentials = req.body
+    userService.checkLogin(credentials)
+        .then(user => {
+            if (user) {
+                const loginToken = userService.getLoginToken(user)
+                res.cookie('loginToken', loginToken)
+                res.send(user)
+            } else {
+                res.status(401).send('Invalid credendials')
+            }
+        })
+})
+
+// Logout
+app.post('/api/auth/logout', (req, res) => {
+    res.clearCookie('loginToken')
+    res.send('Logged out')
+})
+
+
+// Static
+
+// Website
+app.get('/**', (req, res) => {
+    res.sendFile(path.resolve('public/index.html'))
 })
 
 const PORT = 3031

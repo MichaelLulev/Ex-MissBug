@@ -1,0 +1,37 @@
+[
+	{
+		"fullName": "John Dough",
+		"username": "breadman",
+		"password": "flourPower123",
+		"createdAt": 1703169522693,
+		"isAdmin": false
+	},
+	{
+		"fullName": "Sally Sizzle",
+		"username": "pancakeQueen",
+		"password": "SyrupLover99",
+		"createdAt": 1703169522693,
+		"isAdmin": false
+	},
+	{
+		"fullName": "Mike Rover",
+		"username": "spaceCadet",
+		"password": "MarsIsMyHome!2023",
+		"createdAt": 1703169522693,
+		"isAdmin": false
+	},
+	{
+		"fullName": "Fiona Feline",
+		"username": "catWhisperer",
+		"password": "PurrPurrMeow",
+		"createdAt": 1703169522693,
+		"isAdmin": false
+	},
+	{
+		"fullName": "Gary Gigabyte",
+		"username": "adminGuru",
+		"password": "SuperSecure!2023",
+		"createdAt": 1703169522693,
+		"isAdmin": true
+	}
+]
