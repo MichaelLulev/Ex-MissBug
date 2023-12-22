@@ -9,10 +9,8 @@ app.use(express.static('public'))
 app.use(express.json())
 app.use(cookieParser())
 
-
 // Bug
-
-// GET all bugs
+// Get all bugs
 app.get('/api/bug', (req, res) => {
     const filterBy = {
         text: req.query.text,
@@ -37,16 +35,20 @@ app.get('/api/bug', (req, res) => {
         })
 })
 
-// GET a bug
+// Get one bug
 app.get('/api/bug/:bugId', (req, res) => {
     const bugId = req.params.bugId
+    const loginToken = req.cookies.loginToken
+    const loggedInUser = userService.validateLoginToken(loginToken)
     bugService.get(bugId)
         .then(bug => {
-            let bugsVisited = req.cookies.bugsVisited || []
-            bugsVisited.push(bug._id)
-            bugsVisited = Array.from(new Set(bugsVisited))
-            res.cookie('bugsVisited', bugsVisited, { maxAge: 60 * 1000 })
-            if (3 < bugsVisited.length) return res.status(401).send('Wait for a bit')
+            if (! loggedInUser) {
+                let bugsVisited = req.cookies.bugsVisited || []
+                bugsVisited.push(bug._id)
+                bugsVisited = Array.from(new Set(bugsVisited))
+                res.cookie('bugsVisited', bugsVisited, { maxAge: 60 * 1000 })
+                if (3 < bugsVisited.length) return res.status(401).send('Wait for a bit or login to see more bugs!')
+            }
             return res.send(bug)
         })
         .catch(err => {
@@ -55,8 +57,11 @@ app.get('/api/bug/:bugId', (req, res) => {
         })
 })
 
-// PUT a bug
+// Update bug
 app.put('/api/bug', (req, res) => {
+    const loginToken = req.cookies.loginToken
+    const loggedInUser = userService.validateLoginToken(loginToken)
+    if (! loggedInUser) return res.status(401).send('Cannot update bug: Not logged in')
     const updatedBug = {
         _id: req.body._id,
         title: req.body.title,
@@ -64,7 +69,7 @@ app.put('/api/bug', (req, res) => {
         description: req.body.description,
         labels: req.body.labels,
     }
-    bugService.save(updatedBug)
+    bugService.save(updatedBug, loggedInUser)
         .then(bug => {
             res.send(bug)
         })
@@ -74,15 +79,18 @@ app.put('/api/bug', (req, res) => {
         })
 })
 
-// POST a bug
+// Create bug
 app.post('/api/bug', (req, res) => {
+    const loginToken = req.cookies.loginToken
+    const loggedInUser = userService.validateLoginToken(loginToken)
+    if (! loggedInUser) return res.status(401).send('Cannot create bug: Not logged in')
     const newBug = {
         title: req.body.title,
         severity: req.body.severity,
         description: req.body.description,
         labels: req.body.labels,
     }
-    bugService.save(newBug)
+    bugService.save(newBug, loggedInUser)
         .then(bug => {
             res.send(bug)
         })
@@ -92,10 +100,13 @@ app.post('/api/bug', (req, res) => {
         })
 })
 
-// DELETE a bug
+// Delete bug
 app.delete('/api/bug/:bugId', (req, res) => {
     const bugId = req.params.bugId
-    bugService.remove(bugId)
+    const loginToken = req.cookies.loginToken
+    const loggedInUser = userService.validateLoginToken(loginToken)
+    if (! loggedInUser) return res.status(401).send('Cannot delete bug: Not logged in')
+    bugService.remove(bugId, loggedInUser)
         .then(bug => {
             res.send(bug)
         })
@@ -107,8 +118,11 @@ app.delete('/api/bug/:bugId', (req, res) => {
 
 
 // User
-
+// Get all users
 app.get('/api/user', (req, res) => {
+    const loginToken = req.cookies.loginToken
+    const loggedInUser = userService.validateLoginToken(loginToken)
+    if (! loggedInUser && ! loggedInUser.isAdmin) return res.status(401).send('Cannot get users: Not admin')
     userService.query()
         .then(users => res.send(users))
         .catch(err => console.error(err) || res.status(400).send('Cannot get users'))
@@ -143,6 +157,9 @@ app.post('/api/auth/login', (req, res) => {
 
 // Logout
 app.post('/api/auth/logout', (req, res) => {
+    const loginToken = req.cookies.loginToken
+    const loggedInUser = userService.validateLoginToken(loginToken)
+    if (! loggedInUser) return res.status(401).send('Cannot logout: Not logged in')
     res.clearCookie('loginToken')
     res.send('Logged out')
 })

@@ -14,31 +14,24 @@ export const bugService = {
 const prmBugs = _loadBugs()
 
 function _loadBugs() {
-    return fs.readFile(BUGS_PATH, 'utf-8')
-        .then(res => {
-            let bugs = JSON.parse(res)
-            if (! bugs || bugs.length === 0) return Promise.reject('There are no bugs!')
-            console.log('There are bugs! everything is OK!')
-            return bugs
-        })
-        .catch(err => {
-            console.error(err)
-            console.log('Creating bugs :)')
-            bugs = _createNewBugs()
-            return _saveBugs(bugs).then(() => bugs)
-        })
+    return utilService.loadFromFile(BUGS_DIR, BUGS_PATH, _createNewBugs)
 }
 
-function _saveBugs(bugs=[]) {
-    console.log('Saving bugs')
-    const strBugs = JSON.stringify(bugs, null, '\t')
-    return fs.stat(BUGS_DIR)
-        .catch(() => fs.mkdir(BUGS_DIR))
-        .then(() => fs.writeFile(BUGS_PATH, strBugs, 'utf-8'))
+function _saveBugs() {
+    return prmBugs
+        .then(bugs => utilService.saveToFile(BUGS_DIR, BUGS_PATH, bugs))
 }
 
 function query(filterBy, sortBy, pageInfo) {
     return prmBugs
+        .then(bugs => {
+            if (! bugs || bugs.length === 0) {
+                console.log('There are no bugs! Creating bugs :)')
+                bugs = _createNewBugs()
+                return _saveBugs(bugs).then(() => bugs)
+            }
+            return bugs
+        })
         .then(bugs => filter(bugs, filterBy))
         .then(bugs => sort(bugs, sortBy))
         .then(bugs => getPage(bugs, pageInfo))
@@ -97,13 +90,18 @@ function get(bugId) {
         })
 }
 
-function save(bug) {
+function save(bug, loggedInUser) {
     return prmBugs
         .then(bugs => {
             if (bug._id) {
                 const bugIdx = bugs.findIndex(_bug => _bug._id === bug._id)
                 if (bugIdx < 0) return Promise.reject('No such bug')
                 const origBug = bugs[bugIdx]
+                if (! loggedInUser.isAdmin &&
+                        bug.creator &&
+                        bug.creator._id !== loggedInUser._id) {
+                    return Promise.reject('Not your bug!')
+                }
                 for (let [key, value] of Object.entries(bug)) {
                     if (value !== undefined) origBug[key] = value
                 }
@@ -115,6 +113,7 @@ function save(bug) {
                 }
                 newBug._id = utilService.makeId()
                 newBug.createdAt = Date.now()
+                newBug.creator = loggedInUser
                 bugs.unshift(newBug)
                 bug = newBug
             }
@@ -122,12 +121,17 @@ function save(bug) {
         })
 }
 
-function remove(bugId) {
+function remove(bugId, loggedInUser) {
     return prmBugs
         .then(bugs => {
             const bugIdx = bugs.findIndex(bug => bug._id === bugId)
             if (bugIdx < 0) return Promise.reject('No such bug')
             const bug = bugs[bugIdx]
+            if (! loggedInUser.isAdmin &&
+                    bug.creator &&
+                    bug.creator._id !== loggedInUser._id) {
+                return Promise.reject('Not your bug!')
+            }
             bugs.splice(bugIdx, 1)
             return _saveBugs(bugs).then(() => bug)
         })
@@ -140,6 +144,7 @@ function getNewBug() {
         severity: 0,
         description: "",
         labels: [],
+        creator: null,
     }
     return defaultBug
 }
@@ -150,82 +155,142 @@ function _createNewBugs() {
             _id: "1NF1N1T3",
             title: "Infinite Loop Detected",
             severity: 4,
-            description: "This bug turns the code into a never-ending story. It's like Groundhog Day, but without Bill Murray and with more screaming at the monitor.",
+            description: "This bug turns the code into a never-ending story...",
             labels: ["EndlessFun", "WhyMe", "TimeTravelWoes", "GroundhogDayForever"],
             createdAt: Date.now(),
+            creator: {
+                _id: 'doughy-delights-123',
+                fullName: 'John Dough',
+                username: 'breadman',
+                isAdmin: false,
+            }
         },
         {
             _id: "K3YB0RD",
             title: "Keyboard Not Found",
             severity: 3,
-            description: "The computer insists there's no keyboard. We suggest trying to convince it by typing 'I swear, the keyboard is right here,' but that hasn't worked so far.",
+            description: "The computer insists there's no keyboard...",
             labels: ["MysteryTech", "WhyMe", "GhostKeyboard", "TypingIntoTheVoid"],
             createdAt: Date.now(),
+            creator: {
+                _id: 'syrupy-skills-456',
+                fullName: 'Sally Sizzle',
+                username: 'pancakeQueen',
+                isAdmin: false,
+            }
         },
         {
             _id: "C0FF33",
             title: "404 Coffee Not Found",
             severity: 2,
-            description: "Critical error where the developer's coffee cup is empty. Productivity drops to 0%, accompanied by mild panic and existential dread.",
+            description: "Critical error where the developer's coffee cup is empty...",
             labels: ["LifeSupport", "CrisisMode", "JavaNotFound", "CaffeineCrash"],
             createdAt: Date.now(),
+            creator: {
+                _id: 'mars-maverick-789',
+                fullName: 'Mike Rover',
+                username: 'spaceCadet',
+                isAdmin: false,
+            }
         },
         {
             _id: "G0053",
             title: "Unexpected Response",
             severity: 1,
-            description: "The software just gave a response that was so unexpected, it might as well have been a plot twist in a soap opera. Maybe it's time to ask if it's feeling okay?",
+            description: "The software just gave a response that was so unexpected...",
             labels: ["TwilightZone", "WhyMe", "DramaQueenSoftware", "PlotTwistError"],
             createdAt: Date.now(),
+            creator: {
+                _id: 'purrfect-pal-101',
+                fullName: 'Fiona Feline',
+                username: 'catWhisperer',
+                isAdmin: false,
+            }
         },
         {
             _id: "QU4NTUM",
             title: "Schrodinger's Variable",
             severity: 3,
-            description: "This variable is simultaneously undefined and defined until observed. It defies logic and is contemplating a career in quantum physics.",
+            description: "This variable is simultaneously undefined and defined until observed...",
             labels: ["QuantumLeap", "MysteryTech", "QuantumConundrum", "HereAndNotHere"],
             createdAt: Date.now(),
+            creator: {
+                _id: 'byte-boss-202',
+                fullName: 'Gary Gigabyte',
+                username: 'adminGuru',
+                isAdmin: true,
+            }
         },
         {
             _id: "BR41NZ",
             title: "Zombie Processes",
             severity: 4,
-            description: "These processes are dead but not really dead. They wander aimlessly through the system, occasionally groaning for CPU brains.",
+            description: "These processes are dead but not really dead...",
             labels: ["UndeadThreads", "CrisisMode", "ZombieApocalypse"],
             createdAt: Date.now(),
+            creator: {
+                _id: 'doughy-delights-123',
+                fullName: 'John Dough',
+                username: 'breadman',
+                isAdmin: false,
+            }
         },
         {
             _id: "P03TRY",
             title: "CSS Haiku Error",
             severity: 2,
-            description: "The CSS has become self-aware and is now only communicating in haikus. Beautiful, yet utterly unhelpful for layout issues.",
+            description: "The CSS has become self-aware and is now only communicating in haikus...",
             labels: ["CreativeCoding", "TwilightZone", "PoeticJustice", "HaikuHavoc"],
             createdAt: Date.now(),
+            creator: {
+                _id: 'syrupy-skills-456',
+                fullName: 'Sally Sizzle',
+                username: 'pancakeQueen',
+                isAdmin: false,
+            }
         },
         {
             _id: "GH05T",
             title: "The Phantom Click",
             severity: 1,
-            description: "Buttons are clicking themselves. It's either a coding error or the office is haunted. The jury is still out.",
+            description: "Buttons are clicking themselves...",
             labels: ["GhostInTheMachine", "MysteryTech", "PoltergeistProblem"],
             createdAt: Date.now(),
+            creator: {
+                _id: 'mars-maverick-789',
+                fullName: 'Mike Rover',
+                username: 'spaceCadet',
+                isAdmin: false,
+            }
         },
         {
             _id: "L04D1NG",
             title: "Eternal Loading Screen",
             severity: 3,
-            description: "This loading screen has been loading for so long, it's now an accepted part of the UI. Users think it's a feature.",
+            description: "This loading screen has been loading for so long...",
             labels: ["EndlessFun", "CrisisMode", "FeatureNotBug", "LoadingLimbo"],
             createdAt: Date.now(),
+            creator: {
+                _id: 'purrfect-pal-101',
+                fullName: 'Fiona Feline',
+                username: 'catWhisperer',
+                isAdmin: false,
+            }
         },
         {
             _id: "CUR50R",
             title: "Teleporting Cursor",
             severity: 2,
-            description: "The cursor randomly teleports across the screen, leading to a fun game of 'find the cursor'. It's not a bug, it's a feature!",
+            description: "The cursor randomly teleports across the screen...",
             labels: ["MagicTricks", "WhyMe", "CursorQuest", "MagicMouseTricks"],
             createdAt: Date.now(),
+            creator: {
+                _id: 'byte-boss-202',
+                fullName: 'Gary Gigabyte',
+                username: 'adminGuru',
+                isAdmin: true,
+            }
         }
-    ]
+    ]    
     return newBugs
 }

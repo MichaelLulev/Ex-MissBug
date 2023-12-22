@@ -16,7 +16,6 @@ export function Page(props) {
 
     return (
         <section className="page">
-            <h3>Page</h3>
             <button
                 className="prev"
                 name="idx"

@@ -20,8 +20,8 @@ export function BugPreview({bug}) {
         <h4>{bug.title}</h4>
         <h1>🐛</h1>
         <p>Severity: <span>{bug.severity}</span></p>
-        <p>Labels: <span>{bug.labels.join(', ')}</span></p>
-        <p>Description: <span><LongText text={bug.description} length={50}/></span></p>
+        <p>Labels: <span><LongText text={bug.labels.join(', ')} length={40} /></span></p>
+        <p>Description: <span><LongText text={bug.description} length={50} /></span></p>
         <p>Created: <span>{getTime()}</span></p>
     </article>
 }

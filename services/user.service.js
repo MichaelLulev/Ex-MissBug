@@ -7,8 +7,6 @@ const USERS_PATH = USERS_DIR + '/user.json'
 
 const cryptr = new Cryptr(process.env.SECRET1 || 'SuperSecretKey!')
 
-var prmUsers = _loadUsers()
-
 export const userService = {
     query,
     save,
@@ -17,18 +15,15 @@ export const userService = {
     validateLoginToken,
 }
 
+const prmUsers = _loadUsers()
+
 function _loadUsers() {
-    return fs.readFile(USERS_PATH, 'utf-8')
-        .then(strUsers => JSON.parse(strUsers))
-        .catch(err => console.error(err) || null)
+    return utilService.loadFromFile(USERS_DIR, USERS_PATH, _createNewUsers)
 }
 
-function _saveUsers(users=[]) {
-    console.log('Saving users')
-    const strUsers = JSON.stringify(users, null, '\t')
-    return fs.stat(USERS_DIR)
-        .catch(() => fs.mkdir(USERS_DIR))
-        .then(() => fs.writeFile(USERS_PATH, strUsers, 'utf-8'))
+function _saveUsers() {
+    return prmUsers
+        .then(users => utilService.saveToFile(USERS_DIR, USERS_PATH, users))
 }
 
 function query() {
@@ -38,16 +33,14 @@ function query() {
                 console.log('There are no users!, creating users :)')
                 users = _createNewUsers()
                 return _saveUsers(users).then(() => users)
-            } else {
-                console.log('There are users! everything is OK!')
-                return users
             }
+            return users
         })
         .catch(err => console.error(err))
 }
 
 function save(user) {
-    return query()
+    return prmUsers
         .then(users => {
             if (users.find(_user => _user.username === user.username)) {
                 return Promise.reject('User already exsists')
@@ -79,6 +72,7 @@ function getNewUser() {
 function _createNewUsers() {
     const newUsers = [
         {
+            _id: 'doughy-delights-123',
             fullName: 'John Dough',
             username: 'breadman',
             password: 'flourPower123',
@@ -86,6 +80,7 @@ function _createNewUsers() {
             isAdmin: false,
         },
         {
+            _id: 'syrupy-skills-456',
             fullName: 'Sally Sizzle',
             username: 'pancakeQueen',
             password: 'SyrupLover99',
@@ -93,6 +88,7 @@ function _createNewUsers() {
             isAdmin: false,
         },
         {
+            _id: 'mars-maverick-789',
             fullName: 'Mike Rover',
             username: 'spaceCadet',
             password: 'MarsIsMyHome!2023',
@@ -100,6 +96,7 @@ function _createNewUsers() {
             isAdmin: false,
         },
         {
+            _id: 'purrfect-pal-101',
             fullName: 'Fiona Feline',
             username: 'catWhisperer',
             password: 'PurrPurrMeow',
@@ -107,6 +104,7 @@ function _createNewUsers() {
             isAdmin: false,
         },
         {
+            _id: 'byte-boss-202',
             fullName: 'Gary Gigabyte',
             username: 'adminGuru',
             password: 'SuperSecure!2023',
@@ -118,7 +116,7 @@ function _createNewUsers() {
 }
 
 function checkLogin({ username, password}) {
-    return query()
+    return prmUsers
         .then(users => {
             let user = users.find(user => user.username === username)
             if (! user) return Promise.reject(`No such user '${username}'`)
@@ -136,7 +134,12 @@ function getLoginToken(user) {
 }
 
 function validateLoginToken(loginToken) {
-    const strUser = cryptr.decrypt(loginToken)
-    const user = JSON.parse(strUser)
+    try {
+        const strUser = cryptr.decrypt(loginToken)
+        var user = JSON.parse(strUser)
+    } catch (err) {
+        console.error(err)
+        var user = null
+    }
     return user
 }

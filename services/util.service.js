@@ -2,8 +2,8 @@ export const utilService = {
     makeId,
     makeLorem,
     getRandomIntInclusive,
-    loadFromStorage,
-    saveToStorage
+    loadFromFile,
+    saveToFile,
 }
 
 function makeId(length = 6) {
@@ -33,13 +33,25 @@ function getRandomIntInclusive(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive 
 }
 
-
-function loadFromStorage(keyDB) {
-    const val = localStorage.getItem(keyDB)
-    return JSON.parse(val)
+function loadFromFile(dir, path, elementsCreator) {
+    return fs.readFile(path, 'utf-8')
+        .then(res => {
+            let elements = JSON.parse(res)
+            if (! elements || elements.length === 0) return Promise.reject('No elements in path ' + path)
+            return elements
+        })
+        .catch(err => {
+            console.error(err)
+            console.log('Creating elements')
+            const elements = elementsCreator()
+            return saveToFile(dir, path, elements).then(() => elements)
+        })
 }
 
-function saveToStorage(keyDB, val) {
-    const valStr = JSON.stringify(val)
-    localStorage.setItem(keyDB, valStr)
+function saveToFile(dir, path, elements=[]) {
+    console.log('Saving elements to path ' + path)
+    const strElements = JSON.stringify(elements, null, '\t')
+    return fs.stat(dir)
+        .catch(() => fs.mkdir(dir))
+        .then(() => fs.writeFile(path, strElements, 'utf-8'))
 }
