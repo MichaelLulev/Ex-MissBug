@@ -96,9 +96,10 @@ function save(bug, loggedInUser) {
                 const bugIdx = bugs.findIndex(_bug => _bug._id === bug._id)
                 if (bugIdx < 0) return Promise.reject('No such bug')
                 const origBug = bugs[bugIdx]
-                if (! loggedInUser.isAdmin &&
-                        bug.creator &&
-                        bug.creator._id !== loggedInUser._id) {
+                console.log('bug', bug)
+                console.log('origBug', origBug)
+                console.log('loggedInUser', loggedInUser)
+                if (! loggedInUser.isAdmin && origBug.creator._id !== loggedInUser._id) {
                     return Promise.reject('Not your bug!')
                 }
                 for (let [key, value] of Object.entries(bug)) {
@@ -126,9 +127,7 @@ function remove(bugId, loggedInUser) {
             const bugIdx = bugs.findIndex(bug => bug._id === bugId)
             if (bugIdx < 0) return Promise.reject('No such bug')
             const bug = bugs[bugIdx]
-            if (! loggedInUser.isAdmin &&
-                    bug.creator &&
-                    bug.creator._id !== loggedInUser._id) {
+            if (! loggedInUser.isAdmin && bug.creator._id !== loggedInUser._id) {
                 return Promise.reject('Not your bug!')
             }
             bugs.splice(bugIdx, 1)

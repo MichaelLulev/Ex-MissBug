@@ -1,0 +1,167 @@
+[
+	{
+		"title": "Haha bug!!!",
+		"severity": 1,
+		"description": ":-P",
+		"labels": [],
+		"creator": {
+			"_id": "byte-boss-202",
+			"fullName": "Gary Gigabyte",
+			"username": "adminGuru",
+			"createdAt": 1703235703431,
+			"isAdmin": true
+		},
+		"_id": "bnoIGK",
+		"createdAt": 1703236604495
+	},
+	{
+		"_id": "C0FF33",
+		"title": "Nuuuull",
+		"severity": 5,
+		"description": "Critical error where the developer's coffee cup is empty...",
+		"labels": [
+			"LifeSupport",
+			"CrisisMode",
+			"JavaNotFound",
+			"CaffeineCrash"
+		],
+		"createdAt": 1703235703434,
+		"creator": {
+			"_id": "mars-maverick-789",
+			"fullName": "Mike Rover",
+			"username": "spaceCadet",
+			"isAdmin": false
+		}
+	},
+	{
+		"_id": "G0053",
+		"title": "Unexpected Response",
+		"severity": 1,
+		"description": "The software just gave a response that was so unexpected...",
+		"labels": [
+			"TwilightZone",
+			"WhyMe",
+			"DramaQueenSoftware",
+			"PlotTwistError"
+		],
+		"createdAt": 1703235703434,
+		"creator": {
+			"_id": "purrfect-pal-101",
+			"fullName": "Fiona Feline",
+			"username": "catWhisperer",
+			"isAdmin": false
+		}
+	},
+	{
+		"_id": "QU4NTUM",
+		"title": "Schrodinger's Variable",
+		"severity": 3,
+		"description": "This variable is simultaneously undefined and defined until observed...",
+		"labels": [
+			"QuantumLeap",
+			"MysteryTech",
+			"QuantumConundrum",
+			"HereAndNotHere"
+		],
+		"createdAt": 1703235703434,
+		"creator": {
+			"_id": "byte-boss-202",
+			"fullName": "Gary Gigabyte",
+			"username": "adminGuru",
+			"isAdmin": true
+		}
+	},
+	{
+		"_id": "BR41NZ",
+		"title": "Zombie Processes",
+		"severity": 4,
+		"description": "These processes are dead but not really dead...",
+		"labels": [
+			"UndeadThreads",
+			"CrisisMode",
+			"ZombieApocalypse"
+		],
+		"createdAt": 1703235703434,
+		"creator": {
+			"_id": "doughy-delights-123",
+			"fullName": "John Dough",
+			"username": "breadman",
+			"isAdmin": false
+		}
+	},
+	{
+		"_id": "P03TRY",
+		"title": "CSS Haiku Error",
+		"severity": 2,
+		"description": "The CSS has become self-aware and is now only communicating in haikus...",
+		"labels": [
+			"CreativeCoding",
+			"TwilightZone",
+			"PoeticJustice",
+			"HaikuHavoc"
+		],
+		"createdAt": 1703235703434,
+		"creator": {
+			"_id": "syrupy-skills-456",
+			"fullName": "Sally Sizzle",
+			"username": "pancakeQueen",
+			"isAdmin": false
+		}
+	},
+	{
+		"_id": "GH05T",
+		"title": "The Phantom Click",
+		"severity": 1,
+		"description": "Buttons are clicking themselves...",
+		"labels": [
+			"GhostInTheMachine",
+			"MysteryTech",
+			"PoltergeistProblem"
+		],
+		"createdAt": 1703235703434,
+		"creator": {
+			"_id": "mars-maverick-789",
+			"fullName": "Mike Rover",
+			"username": "spaceCadet",
+			"isAdmin": false
+		}
+	},
+	{
+		"_id": "L04D1NG",
+		"title": "Eternal Loading Screen",
+		"severity": 3,
+		"description": "This loading screen has been loading for so long...",
+		"labels": [
+			"EndlessFun",
+			"CrisisMode",
+			"FeatureNotBug",
+			"LoadingLimbo"
+		],
+		"createdAt": 1703235703434,
+		"creator": {
+			"_id": "purrfect-pal-101",
+			"fullName": "Fiona Feline",
+			"username": "catWhisperer",
+			"isAdmin": false
+		}
+	},
+	{
+		"_id": "CUR50R",
+		"title": "Teleporting Cursor",
+		"severity": 2,
+		"description": "The cursor randomly teleports across the screen...",
+		"labels": [
+			"MagicTricks",
+			"WhyMe",
+			"CursorQuest",
+			"MagicMouseTricks"
+		],
+		"createdAt": 1703235703434,
+		"creator": {
+			"_id": "byte-boss-202",
+			"fullName": "Gary Gigabyte",
+			"username": "adminGuru",
+			"isAdmin": true
+		}
+	}
+]

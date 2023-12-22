@@ -118,7 +118,7 @@ function checkLogin({ username, password}) {
     return prmUsers
         .then(users => {
             let user = users.find(user => user.username === username)
-            if (! user) return Promise.reject(`No such user '${username}'`)
+            if (! user) return Promise.reject(`No such username '${username}'`)
             if (user.password !== password) return Promise.reject('Wrong password!')
             user = { ...user }
             delete user.password
