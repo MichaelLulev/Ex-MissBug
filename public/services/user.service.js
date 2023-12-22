@@ -11,27 +11,25 @@ export const userService = {
 }
 
 function signup(user) {
-    const { username, password, fullName } = user
-    return axios.post('/api/auth/signup', { username, password, fullName })
+    return axios.post('/api/auth/signup', user)
         .then(res => res.data)
         .then(user => {
             const strUser = JSON.stringify(user)
             sessionStorage.setItem(KEY_LOGGED_IN_USER, strUser)
             return user
         })
-        .catch(err => console.error(err))
+        .catch(({ response }) => console.error(response.data))
 }
 
 function login(user) {
-    const { username, password } = user
-    return axios.post('/api/auth/login', { username, password })
+    return axios.post('/api/auth/login', user)
         .then(res => res.data)
         .then(user => {
             const strUser = JSON.stringify(user)
             sessionStorage.setItem(KEY_LOGGED_IN_USER, strUser)
             return user
         })
-        .catch(err => console.error(err))
+        .catch(({ response }) => console.error(response.data))
 }
 
 function getLoggedInUser() {
@@ -45,7 +43,7 @@ function logout() {
         .then(() => {
             sessionStorage.removeItem(KEY_LOGGED_IN_USER)
         })
-        .catch(err => console.error(err))
+        .catch(({ response }) => console.error(response.data))
 }
 
 function getNewUser() {

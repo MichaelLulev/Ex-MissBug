@@ -9,6 +9,7 @@ const cryptr = new Cryptr(process.env.SECRET1 || 'SuperSecretKey!')
 export const userService = {
     query,
     save,
+    getNewUser,
     checkLogin,
     getLoginToken,
     validateLoginToken,
@@ -47,6 +48,7 @@ function save(user) {
             let newUser = getNewUser()
             for (let key in newUser) {
                 if (user[key]) newUser[key] = user[key]
+                else return Promise.reject('Missing ' + key)
             }
             newUser._id = utilService.makeId()
             newUser.createdAt = Date.now()

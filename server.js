@@ -196,6 +196,7 @@ app.post('/api/auth/logout', (req, res) => {
         if (! loggedInUser) return res.status(401).send('Cannot logout: Not logged in')
         res.clearCookie('loginToken')
         res.send('Logged out')
+        console.log('Logged out')
     } catch (err) {
         console.error(err)
     }

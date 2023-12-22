@@ -1,6 +1,7 @@
 const {NavLink} = ReactRouterDOM
 const {useEffect} = React
 
+import { Login } from './Login.jsx'
 import {UserMsg} from './UserMsg.jsx'
 
 export function AppHeader() {
@@ -16,6 +17,7 @@ export function AppHeader() {
         <NavLink to="/about">About</NavLink>
       </nav>
       <h1>Bugs are Forever</h1>
+      <Login />
     </header>
   )
 }
