@@ -1,4 +1,3 @@
-import fs from 'fs/promises'
 import { utilService } from './util.service.js'
 
 const BUGS_DIR = './data'

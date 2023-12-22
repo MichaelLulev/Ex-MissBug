@@ -1,3 +1,5 @@
+import fs from 'fs/promises'
+
 export const utilService = {
     makeId,
     makeLorem,

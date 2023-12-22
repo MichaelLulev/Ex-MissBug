@@ -1,4 +1,3 @@
-import fs from 'fs/promises'
 import Cryptr from 'cryptr'
 import { utilService } from './util.service.js'
 
