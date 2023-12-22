@@ -49,12 +49,16 @@ function query() {
 function save(user) {
     return query()
         .then(users => {
+            if (users.find(_user => _user.username === user.username)) {
+                return Promise.reject('User already exsists')
+            }
             let newUser = getNewUser()
             for (let key in newUser) {
                 if (user[key]) newUser[key] = user[key]
             }
             newUser._id = utilService.makeId()
             newUser.createdAt = Date.now()
+            newUser.isAdmin = false
             users.unshift(newUser)
             user = { ...newUser }
             delete user.password
@@ -68,8 +72,6 @@ function getNewUser() {
         fullName: '',
         username: '',
         password: '',
-        createdAt: NaN,
-        isAdmin: false,
     }
     return newUser
 }

@@ -119,14 +119,11 @@ app.post('/api/auth/signup', (req, res) => {
     const credentials = req.body
     userService.save(credentials)
         .then(user => {
-            if (user) {
-                const loginToken = userService.getLoginToken(user)
-                res.cookie('loginToken', loginToken)
-                res.send(user)
-            } else {
-                res.status(400).send('Cannot signup')
-            }
+            const loginToken = userService.getLoginToken(user)
+            res.cookie('loginToken', loginToken)
+            res.send(user)
         })
+        .catch(err => console.log(err) || res.status(400).send('Cannot signup: ' + err))
 })
 
 // Login
@@ -153,10 +150,10 @@ app.post('/api/auth/logout', (req, res) => {
 
 // Static
 
-// Website
-app.get('/**', (req, res) => {
-    res.sendFile(path.resolve('public/index.html'))
-})
+// // Website
+// app.get('/**', (req, res) => {
+//     res.sendFile(path.resolve('public/index.html'))
+// })
 
 const PORT = 3031
 

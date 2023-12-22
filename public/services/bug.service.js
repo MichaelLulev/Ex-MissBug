@@ -22,12 +22,14 @@ function query(filterBy={}, sortBy={}, pageInfo={}) {
     return axios.get(API_BASE_URL, { params: { ...filterBy, ...sortBy, ...pageInfo } })
         .then(res => res.data)
         .then(([bugs, isLastPage, lastPage]) => [bugs, isLastPage, lastPage])
+        .catch(err => console.error(err))
 }
 
 function get(bugId) {
     return axios.get(API_BASE_URL + bugId)
         .then(res => res.data)
         .then(bug => bug)
+        .catch(err => console.error(err))
 }
 
 function save(bug) {
@@ -43,6 +45,7 @@ function remove(bugId) {
     return axios.delete(API_BASE_URL + bugId)
         .then(res => res.data)
         .then(bug => bug)
+        .catch(err => console.error(err))
 }
 
 function getDefaultFilterBy() {

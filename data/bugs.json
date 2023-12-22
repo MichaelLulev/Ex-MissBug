@@ -77,19 +77,6 @@
 		"createdAt": 1703143767387
 	},
 	{
-		"_id": "P03TRY",
-		"title": "CSS Haiku Error",
-		"severity": 2,
-		"description": "The CSS has become self-aware and is now only communicating in haikus. Beautiful, yet utterly unhelpful for layout issues.",
-		"labels": [
-			"CreativeCoding",
-			"TwilightZone",
-			"PoeticJustice",
-			"HaikuHavoc"
-		],
-		"createdAt": 1703143767387
-	},
-	{
 		"_id": "GH05T",
 		"title": "The Phantom Click",
 		"severity": 1,

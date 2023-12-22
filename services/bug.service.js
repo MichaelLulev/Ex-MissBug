@@ -11,17 +11,26 @@ export const bugService = {
     remove,
 }
 
+const prmBugs = _loadBugs()
+
 function _loadBugs() {
     return fs.readFile(BUGS_PATH, 'utf-8')
-        .then(res => JSON.parse(res))
+        .then(res => {
+            let bugs = JSON.parse(res)
+            if (! bugs || bugs.length === 0) return Promise.reject('There are no bugs!')
+            console.log('There are bugs! everything is OK!')
+            return bugs
+        })
         .catch(err => {
             console.error(err)
-            return null
+            console.log('Creating bugs :)')
+            bugs = _createNewBugs()
+            return _saveBugs(bugs).then(() => bugs)
         })
 }
 
 function _saveBugs(bugs=[]) {
-    console.log('saving bugs')
+    console.log('Saving bugs')
     const strBugs = JSON.stringify(bugs, null, '\t')
     return fs.stat(BUGS_DIR)
         .catch(() => fs.mkdir(BUGS_DIR))
@@ -29,17 +38,7 @@ function _saveBugs(bugs=[]) {
 }
 
 function query(filterBy, sortBy, pageInfo) {
-    return _loadBugs()
-        .then(bugs => {
-            if (! bugs || bugs.length === 0) {
-                console.log('There are no bugs!, creating bugs :)')
-                bugs = _createNewBugs()
-                return _saveBugs(bugs).then(() => bugs)
-            } else {
-                console.log('There are bugs! everything is OK!')
-                return bugs
-            }
-        })
+    return prmBugs
         .then(bugs => filter(bugs, filterBy))
         .then(bugs => sort(bugs, sortBy))
         .then(bugs => getPage(bugs, pageInfo))
@@ -82,8 +81,7 @@ function getPage(bugs, pageInfo) {
     if (! pageInfo) return bugs
     let idx = pageInfo.idx || 0
     const bugsPerPage = pageInfo.bugsPerPage || bugs.length
-    const lastPage = Math.ceil(bugs.length / bugsPerPage)
-    // const startIdx = Math.min(idx, lastPage - 1) * bugsPerPage
+    const lastPage = Math.ceil(bugs.length / bugsPerPage) || 1
     const startIdx = idx * bugsPerPage
     const endIdx = startIdx + bugsPerPage
     const isLastPage = (bugs.length === 0) || lastPage <= idx + 1
@@ -91,7 +89,7 @@ function getPage(bugs, pageInfo) {
 }
 
 function get(bugId) {
-    return query()
+    return prmBugs
         .then(bugs => {
             const bug = bugs.find(bug => bug._id === bugId)
             if (! bug) return Promise.reject('No such bug')
@@ -100,19 +98,20 @@ function get(bugId) {
 }
 
 function save(bug) {
-    return query()
+    return prmBugs
         .then(bugs => {
             if (bug._id) {
                 const bugIdx = bugs.findIndex(_bug => _bug._id === bug._id)
                 if (bugIdx < 0) return Promise.reject('No such bug')
+                const origBug = bugs[bugIdx]
                 for (let [key, value] of Object.entries(bug)) {
-                    if (value !== undefined) bugs[bugIdx][key] = bug[key]
+                    if (value !== undefined) origBug[key] = value
                 }
-                bug = bugs[bugIdx]
+                bug = origBug
             } else {
-                let newBug = getNewBug()
+                const newBug = getNewBug()
                 for (let [key, value] of Object.entries(bug)) {
-                    if (value !== undefined) newBug[key] = bug[key]
+                    if (value !== undefined) newBug[key] = value
                 }
                 newBug._id = utilService.makeId()
                 newBug.createdAt = Date.now()
@@ -124,7 +123,7 @@ function save(bug) {
 }
 
 function remove(bugId) {
-    return query()
+    return prmBugs
         .then(bugs => {
             const bugIdx = bugs.findIndex(bug => bug._id === bugId)
             if (bugIdx < 0) return Promise.reject('No such bug')
@@ -132,10 +131,7 @@ function remove(bugId) {
             bugs.splice(bugIdx, 1)
             return _saveBugs(bugs).then(() => bug)
         })
-        .catch(err => {
-            console.log(err)
-            return Promise.reject(err)
-        })
+        .catch(err => console.error(err) || Promise.reject(err))
 }
 
 function getNewBug() {
